@@ -1,0 +1,16 @@
+ua\lviv\iot\Server\Controllers\CarController.class
+ua\lviv\iot\Server\Models\Client.class
+ua\lviv\iot\Server\Services\DriverService.class
+ua\lviv\iot\Server\Controllers\ClientController.class
+ua\lviv\iot\Server\Services\TaxiService.class
+ua\lviv\iot\Server\Controllers\OrderController.class
+ua\lviv\iot\Server\App.class
+ua\lviv\iot\Server\Controllers\TaxiController.class
+ua\lviv\iot\Server\Models\Car.class
+ua\lviv\iot\Server\Controllers\DriverController.class
+ua\lviv\iot\Server\Models\TaxiEntity.class
+ua\lviv\iot\Server\Services\ClientService.class
+ua\lviv\iot\Server\Models\Driver.class
+ua\lviv\iot\Server\Services\CarService.class
+ua\lviv\iot\Server\Models\Order.class
+ua\lviv\iot\Server\Services\OrderService.class
