@@ -1,37 +1,37 @@
 package ua.lviv.iot.Server.Services;
 
 import org.springframework.stereotype.Service;
-import ua.lviv.iot.Server.Models.Car;
 import ua.lviv.iot.Server.Models.Client;
-import ua.lviv.iot.Server.Models.Driver;
 import ua.lviv.iot.Server.Models.TaxiEntity;
 
 import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class ClientService  extends TaxiService {
+public final class ClientService  extends TaxiService {
 
+    /**
+     * Constructor.
+     * @throws IOException
+     */
     public ClientService() throws IOException {
         super();
         csvFileURL = CSV_FILES_PATH + "client.csv";
         entityClassName = Client.class.getSimpleName();
-        int lineCount = readCSV();
-        System.out.println("--------- Clients read lines: " + lineCount);
+        readCSV();
     }
 
     @Override
     public String toStringAll() {
         String result = "=============== ALL CLIENTS ===============<br>";
-        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet())
-        {
+        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet())  {
             result += toString(item.getValue(), "");
         }
         return result;
     }
 
     @Override
-    public String addEntity(Map<String, String> params) throws IOException {
+    public String addEntity(final Map<String, String> params) throws IOException {
         Client client = new Client();
         client.setId(getNextID());
         client.setName(params.getOrDefault("name", "Client #" + client.getId().toString()));
@@ -42,7 +42,7 @@ public class ClientService  extends TaxiService {
     }
 
     @Override
-    protected String toString(TaxiEntity entity, String margin) {
+    protected String toString(final TaxiEntity entity, final String margin) {
         String result = "<br>" + margin + "---------------<br>";
         if (entity != null) {
             Client client = (Client) entity;
@@ -57,7 +57,7 @@ public class ClientService  extends TaxiService {
     }
 
     @Override
-    protected String buildDataLine(TaxiEntity entity) {
+    protected String buildDataLine(final TaxiEntity entity) {
         Client client = (Client) entity;
         return client.getId().toString() + CSV_SEPARATOR
                 + client.getName() + CSV_SEPARATOR
@@ -65,15 +65,13 @@ public class ClientService  extends TaxiService {
     }
 
     @Override
-    protected String buildHeaderLine()
-    {
+    protected String buildHeaderLine() {
         return super.buildHeaderLine()
                 + CSV_SEPARATOR + "Phone";
     }
 
     @Override
-    protected TaxiEntity parseLine(String line)
-    {
+    protected TaxiEntity parseLine(final String line) {
         var properties = line.split(CSV_SEPARATOR);
 
         Client client  = new Client();

@@ -10,6 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class TaxiEntity {
+    /**
+     * stores id.
+     */
     protected Integer id;
+    /**
+     * stores name.
+     */
     protected String name;
 }

@@ -1,6 +1,5 @@
 package ua.lviv.iot.Server.Services;
 
-import ua.lviv.iot.Server.Models.Driver;
 import ua.lviv.iot.Server.Models.TaxiEntity;
 
 import java.io.BufferedReader;
@@ -31,47 +30,102 @@ public abstract class TaxiService {
         data = new HashMap<>();
         String serviceClassName = this.getClass().getName();
         if (!services.containsKey(serviceClassName)) {
-            System.out.println("******* Add service: " + serviceClassName + " ***************");
             services.put(serviceClassName, this);
         }
     }
 
     //----------------- Public abstract methods -------------------
+
+    /**
+     * Add an entity using GET request.
+     * @param params
+     * @return String
+     * @throws IOException
+     */
     public abstract String addEntity(Map<String, String> params) throws IOException;
+
+    /**
+     * Returns a formatted string of all entities.
+     * @return String
+     */
     public abstract String toStringAll();
 
     //---------------------- Public methods -----------------------
-    public TaxiService getService(String serviceClassName) {
-        return services.get(serviceClassName);
-    }
-    public void add(final TaxiEntity entity) {
-        entity.setId(getNextID());
-        data.put(entity.getId(), entity);
+
+    /**
+     * set FileURL csv.
+     * @param url
+     */
+    public void setCsvFileURL(final String url) {
+        csvFileURL = url;
     }
 
-    public String toStringById(int id, String margin) {
+    /**
+     * get service by service class name.
+     * @param serviceClassName
+     * @return TaxiService
+     */
+    public TaxiService getService(final String serviceClassName) {
+        return services.get(serviceClassName);
+    }
+
+    /**
+     * Add an entity using GET request.
+     * @param entity
+     * @throws IOException
+     */
+    public void add(final TaxiEntity entity) throws IOException {
+        entity.setId(getNextID());
+        data.put(entity.getId(), entity);
+        writeToCSV();
+    }
+
+    /**
+     * Returns a formatted string of entity by id.
+     * @param id - id of entity and margin
+     * @return String to show in browser
+     */
+    public String toStringById(final int id, final String margin) {
         return toString(data.get(id), margin);
     }
-    public String toStringById(int id) {
+
+    /**
+     * Returns a formatted string of entity by id.
+     * @param id
+     * @return String
+     */
+    public String toStringById(final int id) {
         return toStringById(id, "");
     }
 
-    public TaxiEntity getById(int id) {
+    /**
+     * Returns entity by id.
+     * @param id
+     * @return TaxiEntity
+     */
+    public TaxiEntity getById(final int id) {
         return data.get(id);
     }
 
+    /**
+     * Returns all entities.
+     * @return List<TaxiEntity>
+     */
     public List<TaxiEntity> getAll() {
         return new ArrayList<TaxiEntity>(data.values());
     }
 
-    public int readCSV() throws IOException {
+    /**
+     * Read entities from CSV file.
+     * @throws IOException
+     */
+    public void readCSV() throws IOException {
         data.clear();
         int entitiesCount = 0;
         try (FileReader fileReader = new FileReader(csvFileURL);
             BufferedReader actualBR = new BufferedReader(fileReader)) {
             String currentLine = actualBR.readLine();
-            while(currentLine != null)
-            {
+            while (currentLine != null) {
                 if (entitiesCount > 0) {
                     TaxiEntity entity = parseLine(currentLine);
                     data.put(entity.getId(), entity);
@@ -83,16 +137,18 @@ public abstract class TaxiService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return entitiesCount;
     }
 
+    /**
+     * Write to entities to CSV file.
+     * @throws IOException
+     */
     public void writeToCSV() throws IOException {
-        try (FileWriter fileWriter = new FileWriter(csvFileURL, false)){
+        try (FileWriter fileWriter = new FileWriter(csvFileURL, false)) {
             String header = buildHeaderLine();
             fileWriter.write(header);
             fileWriter.write("\r\n");
-            for (Map.Entry<Integer, TaxiEntity> item : data.entrySet())
-            {
+            for (Map.Entry<Integer, TaxiEntity> item : data.entrySet()) {
                 String line = buildDataLine(item.getValue());
                 fileWriter.write(line);
                 fileWriter.write("\r\n");
@@ -103,10 +159,39 @@ public abstract class TaxiService {
         }
     }
 
-    public String removeById(int id) throws IOException {
+    /**
+     * remove all.
+     * @throws IOException
+     */
+    public void removeAll() throws IOException {
+        data.clear();
+        writeToCSV();
+    }
+
+    /**
+     * Remove by id System.out.println.
+     * @param id
+     * @return Returns a formatted string
+     * @throws IOException
+     */
+    public String removeByIdString(final int id) throws IOException {
         String result = "The " + entityClassName + " with id:" + id;
         result += data.remove(id) != null ? " have removed!" : " not found!!!";
         writeToCSV();
+        return result;
+    }
+
+    /**
+     * Remove by id entity.
+     * @param id
+     * @return TaxiEntity
+     * @throws IOException
+     */
+    public TaxiEntity removeById(final int id) throws IOException {
+        var result = data.remove(id);
+        if (result != null) {
+            writeToCSV();
+        }
         return result;
     }
 
@@ -116,23 +201,32 @@ public abstract class TaxiService {
     protected abstract TaxiEntity parseLine(String line);
 
     //--------------------- Protected methods ---------------------
-    protected Integer getNextID() {
+
+    /**
+     * Get next id.
+     * @return Integer
+     */
+    public Integer getNextID() {
         return data.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
     }
 
-    protected String buildHeaderLine()
-    {
+    protected String buildHeaderLine() {
         return "ID" + CSV_SEPARATOR + "Name";
     }
 
-    public boolean edit(int id, TaxiEntity entity) throws IOException {
-        if(entity != null)
-        {
+    /**
+     * Edit entity by id.
+     * @param id
+     * @param entity
+     * @return boolean
+     * @throws IOException
+     */
+    public boolean edit(final int id, final TaxiEntity entity) throws IOException {
+        if (entity != null) {
             data.put(entity.getId(), entity);
             writeToCSV();
             return true;
         }
         return false;
     }
-
 }

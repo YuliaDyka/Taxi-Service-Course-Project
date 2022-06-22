@@ -1,7 +1,6 @@
 package ua.lviv.iot.Server.Services;
 
 import org.springframework.stereotype.Service;
-import ua.lviv.iot.Server.Models.Car;
 import ua.lviv.iot.Server.Models.Order;
 import ua.lviv.iot.Server.Models.TaxiEntity;
 
@@ -9,28 +8,26 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class OrderService extends TaxiService{
+public final class OrderService extends TaxiService {
 
     public OrderService() throws IOException {
         super();
         csvFileURL = CSV_FILES_PATH + "order.csv";
         entityClassName = Order.class.getSimpleName();
-        int lineCount = readCSV();
-        System.out.println("--------- Orders read lines: " + lineCount);
+        readCSV();
     }
 
     @Override
     public String toStringAll() {
         String result = "=============== ALL ORDERS ===============<br>";
-        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet())
-        {
+        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet()) {
             result += toString(item.getValue(), "");
         }
         return result;
     }
 
     @Override
-    public String addEntity(Map<String, String> params) throws IOException {
+    public String addEntity(final Map<String, String> params) throws IOException {
         if (!params.containsKey("carId")) {
             return "Cannot add Order!!! Car ID must to be specified!!!";
         } else if (!params.containsKey("clientId")) {
@@ -53,7 +50,7 @@ public class OrderService extends TaxiService{
     }
 
     @Override
-    protected String toString(TaxiEntity entity, String margin) {
+    protected String toString(final TaxiEntity entity, final String margin) {
         String result = "<br>" + margin + "---------------<br>";
         if (entity != null) {
             Order order = (Order) entity;
@@ -80,7 +77,7 @@ public class OrderService extends TaxiService{
     }
 
     @Override
-    protected String buildDataLine(TaxiEntity entity) {
+    protected String buildDataLine(final TaxiEntity entity) {
         Order order = (Order) entity;
         return order.getId().toString() + CSV_SEPARATOR
                 + order.getName() + CSV_SEPARATOR
@@ -91,8 +88,7 @@ public class OrderService extends TaxiService{
     }
 
     @Override
-    protected String buildHeaderLine()
-    {
+    protected String buildHeaderLine() {
         return super.buildHeaderLine()
                 + CSV_SEPARATOR + "Car ID"
                 + CSV_SEPARATOR + "Client ID"
@@ -101,8 +97,7 @@ public class OrderService extends TaxiService{
     }
 
     @Override
-    protected TaxiEntity parseLine(String line)
-    {
+    protected TaxiEntity parseLine(final String line) {
         var properties = line.split(CSV_SEPARATOR);
 
         Order order  = new Order();

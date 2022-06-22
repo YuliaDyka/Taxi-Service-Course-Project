@@ -1,26 +1,34 @@
 package ua.lviv.iot.Server.Controllers;
 
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import ua.lviv.iot.Server.Models.Driver;
-import ua.lviv.iot.Server.Models.TaxiEntity;
 import ua.lviv.iot.Server.Services.DriverService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/driver")
-public class DriverController extends TaxiController {
+public final class DriverController extends TaxiController {
     @Autowired
-    public DriverController(DriverService driverService) throws IOException {
-        this.service = driverService;
+    public DriverController(final DriverService driverService) throws IOException {
+        service = driverService;
     }
 
+    /**
+     * Add drivers (POST request).
+     * @param drivers
+     * @return ResponseEntity
+     * @throws IOException
+     */
     @PostMapping("/add")
     public ResponseEntity<?> addPost(@RequestBody final List<Driver> drivers) throws IOException {
         for (var driver: drivers) {
@@ -29,6 +37,13 @@ public class DriverController extends TaxiController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    /**
+     * Edit driver by id.
+     * @param id
+     * @param driver
+     * @return ResponseEntity
+     * @throws IOException
+     */
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> put(@PathVariable(name = "id") final String id,
                                  @RequestBody final Driver driver) throws IOException {

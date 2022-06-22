@@ -1,7 +1,6 @@
 package ua.lviv.iot.Server.Services;
 
 import org.springframework.stereotype.Service;
-import ua.lviv.iot.Server.Models.Car;
 import ua.lviv.iot.Server.Models.Driver;
 import ua.lviv.iot.Server.Models.TaxiEntity;
 
@@ -9,29 +8,29 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class DriverService extends TaxiService {
-
+public final class DriverService extends TaxiService {
+    /**
+     * Constructor.
+     * @throws IOException
+     */
     public DriverService() throws IOException {
         super();
         csvFileURL = CSV_FILES_PATH + "drivers.csv";
         entityClassName = Driver.class.getSimpleName();
-        int lineCount = readCSV();
-        System.out.println("--------- Drivers read lines: " + lineCount);
+        readCSV();
     }
 
     @Override
-    public String toStringAll()
-    {
+    public String toStringAll() {
         String result = "=============== ALL DRIVERS ===============<br>";
-        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet())
-        {
+        for (Map.Entry<Integer, TaxiEntity> item : data.entrySet()) {
             result += toString(item.getValue(), "");
         }
         return result;
     }
 
     @Override
-    public String addEntity(Map<String, String> params) throws IOException {
+    public String addEntity(final Map<String, String> params) throws IOException {
         Driver driver = new Driver();
         driver.setId(getNextID());
         driver.setName(params.getOrDefault("name", "Driver #" + driver.getId().toString()));
@@ -44,7 +43,7 @@ public class DriverService extends TaxiService {
 
 
     @Override
-    protected String toString(TaxiEntity entity, String margin) {
+    protected String toString(final TaxiEntity entity, final String margin) {
         String result = "<br>" + margin + "---------------<br>";
         if (entity != null) {
             Driver driver = (Driver) entity;
@@ -60,8 +59,7 @@ public class DriverService extends TaxiService {
     }
 
     @Override
-    protected String buildDataLine(TaxiEntity entity)
-    {
+    protected String buildDataLine(final TaxiEntity entity) {
         Driver driver = (Driver) entity;
         return driver.getId().toString() + CSV_SEPARATOR
                 + driver.getName() + CSV_SEPARATOR
@@ -70,16 +68,14 @@ public class DriverService extends TaxiService {
     }
 
     @Override
-    protected String buildHeaderLine()
-    {
+    protected String buildHeaderLine() {
         return super.buildHeaderLine()
                 + CSV_SEPARATOR + "Phone"
                 + CSV_SEPARATOR + "Experience";
     }
 
     @Override
-    protected TaxiEntity parseLine(String line)
-    {
+    protected TaxiEntity parseLine(final String line) {
         var properties = line.split(CSV_SEPARATOR);
 
         Driver driver = new Driver();
@@ -90,5 +86,4 @@ public class DriverService extends TaxiService {
 
         return driver;
     }
-
 }

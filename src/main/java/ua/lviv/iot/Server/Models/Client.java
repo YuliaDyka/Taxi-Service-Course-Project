@@ -10,5 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Client extends TaxiEntity {
+    /**
+     * stores phone.
+     */
     private String phone;
 }

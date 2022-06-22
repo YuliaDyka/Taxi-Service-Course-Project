@@ -7,19 +7,20 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class CarService extends TaxiService {
-
+public final class CarService extends TaxiService {
+    /**
+     * Constructor.
+     * @throws IOException
+     */
     public CarService() throws IOException {
         super();
         csvFileURL = CSV_FILES_PATH + "cars.csv";
         entityClassName = Car.class.getSimpleName();
-        int lineCount = readCSV();
-        System.out.println("--------- Cars read lines: " + lineCount);
+        readCSV();
     }
 
     @Override
-    public String toStringAll()
-    {
+    public String toStringAll() {
         String result = "=============== ALL CARS ===============<br>";
         for (Map.Entry<Integer, TaxiEntity> item : data.entrySet()) {
             result += toString(item.getValue(), "");
@@ -28,7 +29,7 @@ public class CarService extends TaxiService {
     }
 
     @Override
-    public String addEntity(Map<String, String> params) throws IOException {
+    public String addEntity(final Map<String, String> params) throws IOException {
         if (!params.containsKey("driverId")) {
             return "Cannot add Car!!! Driver ID must to be specified!!!";
         }
@@ -45,7 +46,7 @@ public class CarService extends TaxiService {
     }
 
     @Override
-    protected String toString(TaxiEntity entity, String margin) {
+    protected String toString(final TaxiEntity entity, final String margin) {
         String result = "<br>" + margin + "---------------<br>";
         if (entity != null) {
             Car car = (Car) entity;
@@ -67,8 +68,7 @@ public class CarService extends TaxiService {
     }
 
     @Override
-    protected String buildDataLine(TaxiEntity entity)
-    {
+    protected String buildDataLine(final TaxiEntity entity) {
         Car car = (Car) entity;
         return car.getId().toString() + CSV_SEPARATOR
                 + car.getName() + CSV_SEPARATOR
@@ -79,8 +79,7 @@ public class CarService extends TaxiService {
     }
 
     @Override
-    protected String buildHeaderLine()
-    {
+    protected String buildHeaderLine() {
         return super.buildHeaderLine()
                 + CSV_SEPARATOR + "VIN"
                 + CSV_SEPARATOR + "State Number"
@@ -89,8 +88,7 @@ public class CarService extends TaxiService {
     }
 
     @Override
-    protected TaxiEntity parseLine(String line)
-    {
+    protected TaxiEntity parseLine(final String line) {
         var properties = line.split(CSV_SEPARATOR);
 
         Car car = new Car();
